@@ -57,3 +57,14 @@ node_modules/
 /.claude/
 __pycache__/
 *.pyc
+
+# --- Heavy imagery lives in S3 (Garage), not in git -------------------------
+# Upload/refresh with `pnpm assets:upload` (see docs/STORAGE.md).
+/public/renders/
+/public/photography/
+/public/sequences/
+/visualization/renders/
+/website-assets/**/*.glb
+/website-assets/**/*.png
+/website-assets/**/*.jpg
+/website-assets/**/*.webp
