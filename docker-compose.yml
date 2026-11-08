@@ -1,0 +1,109 @@
+# ---------------------------------------------------------------------------
+# NoClue Industries — production stack (Coolify "Docker Compose" resource)
+#
+# - `app` is exposed only to the Coolify proxy (Traefik); set the domain
+#   https://noclue.industries on the `app` service in Coolify.
+# - `db` has NO published ports and lives on an internal network only.
+# - Named volumes persist PostgreSQL data and uploaded media.
+#
+# Required environment variables (set in Coolify, never commit them):
+#   POSTGRES_PASSWORD, PAYLOAD_SECRET, INQUIRY_IP_SALT, NEXT_PUBLIC_SERVER_URL
+# Optional: SMTP_*, INQUIRY_NOTIFY_TO, TURNSTILE_*, SITE_INDEXABLE
+# ---------------------------------------------------------------------------
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-https://noclue.industries}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-https://noclue.industries}
+      DATABASE_URL: postgres://noclue:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/noclue_industries
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET}
+      INQUIRY_IP_SALT: ${INQUIRY_IP_SALT:?set INQUIRY_IP_SALT}
+      MEDIA_DIR: /app/media
+      SITE_INDEXABLE: ${SITE_INDEXABLE:-true}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM_ADDRESS: ${SMTP_FROM_ADDRESS:-no-reply@noclue.industries}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-NoClue Industries}
+      INQUIRY_NOTIFY_TO: ${INQUIRY_NOTIFY_TO:-}
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+    volumes:
+      - media:/app/media
+    expose:
+      - '3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/healthz >/dev/null || exit 1']
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+
+  # One-off maintenance container (full toolchain, same network):
+  #   docker compose --profile tools run --rm tools pnpm seed
+  #   docker compose --profile tools run --rm tools pnpm payload migrate:status
+  tools:
+    profiles: ['tools']
+    build:
+      context: .
+      target: builder
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://noclue:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/noclue_industries
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-https://noclue.industries}
+      MEDIA_DIR: /app/media
+    volumes:
+      - media:/app/media
+    networks:
+      - internal
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: noclue
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: noclue_industries
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U noclue -d noclue_industries']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  pgdata:
+  media:
+
+networks:
+  internal:

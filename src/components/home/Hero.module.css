@@ -1,0 +1,201 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding-top: var(--header-h);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.visual {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.img,
+.img img {
+  width: 100%;
+  height: 100%;
+}
+.img img {
+  object-fit: cover;
+  object-position: 72% 50%;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(7 9 10 / 0.85) 0%, rgb(7 9 10 / 0.35) 38%, transparent 62%),
+    linear-gradient(0deg, var(--void) 0%, transparent 30%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The board emerges from darkness on load… */
+  .img img {
+    animation: emerge 2.4s var(--ease-out) 0.1s both;
+  }
+  /* …and drifts slightly as the page scrolls (where scroll timelines exist). */
+  @supports (animation-timeline: scroll()) {
+    .visual {
+      animation: drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+@keyframes emerge {
+  from {
+    opacity: 0;
+    filter: brightness(0.2);
+    transform: scale(1.04);
+  }
+}
+@keyframes drift {
+  to {
+    transform: translateY(12vh) scale(1.06);
+    opacity: 0.35;
+  }
+}
+
+.inner {
+  position: relative;
+  display: grid;
+  align-content: end;
+  padding-bottom: clamp(32px, 5vw, 64px);
+}
+
+.figure {
+  position: absolute;
+  top: clamp(24px, 4vw, 56px);
+  right: var(--gutter);
+  max-width: 30ch;
+  text-align: right;
+}
+
+.copy {
+  max-width: 1200px;
+}
+.eyebrow {
+  margin-bottom: clamp(20px, 2.4vw, 32px);
+}
+.title {
+  font-size: clamp(3.25rem, 11.2vw, 12.5rem);
+  display: grid;
+}
+.line {
+  display: block;
+}
+.line > span {
+  display: inline-block;
+}
+.line:nth-child(2) {
+  padding-left: 0.5em;
+}
+.line:nth-child(3) {
+  color: var(--signal);
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px 48px;
+  margin-top: clamp(28px, 3.6vw, 48px);
+}
+.lede {
+  max-width: 46ch;
+  color: var(--fg-2);
+}
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.rail {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  border-top: 1px solid var(--line);
+  padding-block: 18px 22px;
+}
+.specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px clamp(24px, 5vw, 80px);
+  margin: 0;
+}
+.specs div {
+  display: grid;
+  gap: 4px;
+}
+.specs dd {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--fg-2);
+  font-stretch: 104%;
+}
+.scroll {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.scroll i {
+  position: relative;
+  width: 1px;
+  height: 36px;
+  background: var(--line-2);
+  overflow: hidden;
+}
+.scroll i::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 12px;
+  background: var(--signal);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll i::after {
+    animation: probe 2.2s var(--ease-mech) infinite;
+  }
+}
+@keyframes probe {
+  from {
+    transform: translateY(-14px);
+  }
+  to {
+    transform: translateY(40px);
+  }
+}
+
+@media (max-width: 900px) {
+  /* Portrait: the board gets the upper part of the screen, type sits below. */
+  .visual {
+    bottom: auto;
+    height: 60svh;
+  }
+  .img img {
+    object-position: 74% 52%;
+  }
+  .shade {
+    background:
+      linear-gradient(0deg, var(--void) 2%, rgb(7 9 10 / 0.55) 30%, transparent 60%),
+      linear-gradient(180deg, rgb(7 9 10 / 0.6) 0%, transparent 22%);
+  }
+  .figure {
+    display: none;
+  }
+  .line:nth-child(2) {
+    padding-left: 0;
+  }
+  .specs div:nth-child(2) {
+    display: none;
+  }
+  .scroll {
+    display: none;
+  }
+}

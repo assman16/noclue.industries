@@ -1,0 +1,568 @@
+/* ==========================================================================
+   NoClue Industries — design system
+   Near-future industrial: void blacks, gunmetal, cool white, one signal accent.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Archivo NCI';
+  src: url('/fonts/archivo-latin-wdth-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Archivo NCI';
+  src: url('/fonts/archivo-latin-ext-wdth-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono NCI';
+  src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 100 800;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono NCI';
+  src: url('/fonts/jetbrains-mono-latin-ext-wght-normal.woff2') format('woff2-variations');
+  font-weight: 100 800;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* Metric-matched fallback keeps layout shift low while Archivo loads. */
+@font-face {
+  font-family: 'Archivo Fallback';
+  src: local('Arial');
+  ascent-override: 87.8%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+  size-adjust: 104%;
+}
+
+:root {
+  /* Colour — dark foundation */
+  --void: #07090a;
+  --carbon: #0c0f11;
+  --gunmetal: #13181b;
+  --graphite: #1c2327;
+  --steel: #2a3338;
+
+  /* Colour — light foundation (drawing sheets) */
+  --sheet: #e6e9e6;
+  --sheet-2: #d9ddda;
+  --ink: #0b0f11; /* shared with NoClue Studio */
+
+  /* Text */
+  --fg: #e8ecea;
+  --fg-2: #a8b1b4;
+  --fg-3: #6d777c;
+  --fg-4: #454e53;
+
+  /* Signal accent — taken from the orange spring-terminal levers on SA-100 */
+  --signal: #ff5a1f;
+  --signal-hi: #ff7a45;
+  --signal-ink: #160801;
+  /* Heritage accents from NoClue Studio, used sparingly for status */
+  --teal: #9cc5bd;
+  --amber: #b88948;
+
+  --line: rgb(232 236 234 / 0.1);
+  --line-2: rgb(232 236 234 / 0.18);
+  --line-3: rgb(232 236 234 / 0.32);
+  --line-ink: rgb(11 15 17 / 0.14);
+  --line-ink-2: rgb(11 15 17 / 0.3);
+
+  /* Type */
+  --font-sans: 'Archivo NCI', 'Archivo Fallback', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono NCI', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --step--1: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.5rem);
+  --step-2: clamp(1.5rem, 1.25rem + 1.1vw, 2.25rem);
+  --step-3: clamp(2rem, 1.4rem + 2.6vw, 3.75rem);
+  --step-4: clamp(2.6rem, 1.6rem + 4.6vw, 6rem);
+  --step-5: clamp(3.4rem, 1.4rem + 9.4vw, 11.5rem);
+
+  /* Layout */
+  --gutter: clamp(20px, 4vw, 72px);
+  --max: 1680px;
+  --header-h: 72px;
+  --radius: 2px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* shared with NoClue Studio */
+  --ease-mech: cubic-bezier(0.65, 0, 0.2, 1); /* deliberate, machine-like */
+  --dur: 0.7s;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+    interpolate-size: allow-keywords; /* animatable <details> height */
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  font-weight: 400;
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img,
+picture,
+svg,
+canvas,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--signal);
+  color: var(--signal-ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s var(--ease-out);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 2vw, 32px);
+}
+
+.section {
+  position: relative;
+  padding-block: clamp(96px, 14vw, 200px);
+}
+
+.sheet {
+  background: var(--sheet);
+  color: var(--ink);
+  color-scheme: light;
+  --fg: var(--ink);
+  --fg-2: #3e474c;
+  --fg-3: #6a7378;
+  --fg-4: #a3aaad;
+  --line: var(--line-ink);
+  --line-2: var(--line-ink-2);
+  --line-3: rgb(11 15 17 / 0.5);
+}
+
+/* ---------------------------------------------------------------- type */
+
+.display {
+  font-family: var(--font-sans);
+  font-weight: 860;
+  font-stretch: 125%;
+  letter-spacing: -0.035em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.h2 {
+  font-weight: 800;
+  font-stretch: 118%;
+  font-size: var(--step-4);
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+.h3 {
+  font-weight: 760;
+  font-stretch: 112%;
+  font-size: var(--step-2);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+.lede {
+  font-size: var(--step-1);
+  line-height: 1.45;
+  color: var(--fg-2);
+  max-width: 38ch;
+  text-wrap: pretty;
+}
+
+.body {
+  color: var(--fg-2);
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+/* Technical label: mono, small, uppercase, modest tracking. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  font-weight: 450;
+}
+.label--fg {
+  color: var(--fg-2);
+}
+.label--signal {
+  color: var(--signal);
+}
+/* Decorative coordinates/markings: visually quieter than real data. */
+.deco {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-4);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* ---------------------------------------------------------------- controls */
+
+.btn {
+  --h: 52px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: var(--h);
+  padding: 0 22px;
+  border: 1px solid var(--line-3);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 650;
+  font-stretch: 110%;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color 0.35s var(--ease-mech),
+    border-color 0.35s var(--ease-mech);
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--fg);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s var(--ease-mech);
+}
+.btn:hover::before,
+.btn:focus-visible::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.btn:hover,
+.btn:focus-visible {
+  color: var(--void);
+  border-color: var(--fg);
+}
+.btn .arrow {
+  width: 18px;
+  height: 10px;
+  transition: transform 0.45s var(--ease-mech);
+}
+.btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+.btn--signal {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+}
+.btn--signal::before {
+  background: var(--fg);
+}
+
+.sheet .btn {
+  color: var(--ink);
+}
+.sheet .btn::before {
+  background: var(--ink);
+}
+.sheet .btn:hover {
+  color: var(--sheet);
+  border-color: var(--ink);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.4s var(--ease-mech);
+}
+.link:hover {
+  background-size: 0 1px;
+  background-position: 100% 100%;
+}
+
+/* ---------------------------------------------------------------- tags */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+.tag--status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--teal);
+}
+.tag--signal {
+  border-color: rgb(255 90 31 / 0.5);
+  color: var(--signal);
+}
+
+/* ---------------------------------------------------------------- reveal motion */
+
+[data-reveal] {
+  --reveal-delay: 0s;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.9s var(--ease-out) var(--reveal-delay),
+      transform 1.1s var(--ease-out) var(--reveal-delay);
+  }
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+  /* Headline lines rise out of a mask, like parts sliding out of a fixture.
+     The observed element is the wrapper; its child is clipped (a fully clipped
+     element never reports as intersecting). */
+  .js [data-reveal='mask'] {
+    opacity: 1;
+    transform: none;
+  }
+  .js [data-reveal='mask'] > * {
+    display: inline-block;
+    clip-path: inset(0 0 100% 0);
+    translate: 0 0.35em;
+    transition:
+      clip-path 1.1s var(--ease-mech) var(--reveal-delay),
+      translate 1.1s var(--ease-mech) var(--reveal-delay);
+  }
+  .js [data-reveal='mask'].is-in > * {
+    clip-path: inset(-0.1em -0.1em -0.2em -0.1em);
+    translate: 0 0;
+  }
+  .js [data-reveal='rule'] {
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s var(--ease-mech) var(--reveal-delay);
+  }
+  .js [data-reveal='rule'].is-in {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------- misc */
+
+.rule {
+  height: 1px;
+  background: var(--line-2);
+  border: 0;
+  margin: 0;
+}
+
+.regmarks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.regmarks i {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--line-3);
+  border-style: solid;
+  border-width: 0;
+}
+.regmarks i:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.regmarks i:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+.regmarks i:nth-child(3) {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+.regmarks i:nth-child(4) {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+.rich {
+  color: var(--fg-2);
+  max-width: 68ch;
+}
+.rich > * + * {
+  margin-top: 1em;
+}
+.rich h2,
+.rich h3 {
+  color: var(--fg);
+  font-weight: 760;
+  font-stretch: 112%;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  margin-top: 2.2em;
+}
+.rich h2 {
+  font-size: var(--step-2);
+}
+.rich h3 {
+  font-size: var(--step-1);
+}
+.rich ul,
+.rich ol {
+  padding-left: 1.2em;
+}
+.rich li + li {
+  margin-top: 0.4em;
+}
+.rich li::marker {
+  color: var(--signal);
+}
+.rich a {
+  color: var(--fg);
+  text-underline-offset: 3px;
+}
+.rich strong {
+  color: var(--fg);
+  font-weight: 650;
+}

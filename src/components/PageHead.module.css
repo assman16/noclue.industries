@@ -1,0 +1,21 @@
+.head {
+  display: grid;
+  gap: clamp(20px, 2.4vw, 32px);
+  padding-top: calc(var(--header-h) + clamp(56px, 9vw, 140px));
+  padding-bottom: 0;
+}
+.title {
+  font-size: clamp(2.75rem, 1rem + 7.8vw, 9.5rem);
+  max-width: 14ch;
+}
+.title span {
+  display: inline-block;
+}
+.intro {
+  max-width: 56ch;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -1,0 +1,22 @@
+# Local development database only. The app runs on the host with `pnpm dev`.
+#   docker compose -f docker-compose.dev.yml up -d
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: noclue
+      POSTGRES_PASSWORD: noclue-dev
+      POSTGRES_DB: noclue_industries
+    ports:
+      - '127.0.0.1:5433:5432' # loopback only
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U noclue -d noclue_industries']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata-dev:

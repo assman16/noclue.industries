@@ -1,0 +1,71 @@
+{
+  "width": 1600,
+  "height": 900,
+  "frames": {
+    "96": [
+      {
+        "id": "lid_screws",
+        "label": "4 \u00d7 M3 \u00d7 12 cap screws",
+        "note": "ISO 4762, black oxide",
+        "x": 0.6811,
+        "y": 0.1822
+      },
+      {
+        "id": "lid",
+        "label": "Machined lid",
+        "note": "counterbored, stepped window recess",
+        "x": 0.816,
+        "y": 0.3313
+      },
+      {
+        "id": "window",
+        "label": "Glass window",
+        "note": "38 \u00d7 14 \u00d7 1.5",
+        "x": 0.6635,
+        "y": 0.2522
+      },
+      {
+        "id": "gasket",
+        "label": "Silicone gasket",
+        "note": "1.8 mm section in 2 \u00d7 1 mm groove",
+        "x": 0.5456,
+        "y": 0.473
+      },
+      {
+        "id": "gland",
+        "label": "M12 cable gland",
+        "note": "",
+        "x": 0.439,
+        "y": 0.7225
+      },
+      {
+        "id": "pcb_screws",
+        "label": "4 \u00d7 M3 pan head",
+        "note": "",
+        "x": 0.6788,
+        "y": 0.5369
+      },
+      {
+        "id": "pcb",
+        "label": "Demonstration board",
+        "note": "100 \u00d7 60 \u00d7 1.6",
+        "x": 0.7804,
+        "y": 0.658
+      },
+      {
+        "id": "standoffs",
+        "label": "M3 hex standoffs",
+        "note": "brass, 10 mm",
+        "x": 0.678,
+        "y": 0.661
+      },
+      {
+        "id": "base",
+        "label": "Base housing",
+        "note": "bead-blasted aluminium",
+        "x": 0.8137,
+        "y": 0.7246
+      }
+    ]
+  }
+}

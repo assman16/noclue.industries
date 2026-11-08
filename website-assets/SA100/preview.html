@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SA-100 board preview</title>
+<script type="module" src="https://unpkg.com/@google/model-viewer@4.4.0/dist/model-viewer.min.js"></script>
+<style>
+  body { margin: 0; color: #17241d; background: #eef1ee; font: 16px/1.5 system-ui, sans-serif; }
+  main { max-width: 1100px; margin: auto; padding: 24px; }
+  h1 { margin-bottom: 0; }
+  model-viewer { display: block; width: 100%; height: min(76vh, 760px); min-height: 320px; }
+  a { color: #1c5d41; }
+</style>
+<main>
+  <h1>SA-100</h1>
+  <p>Drag to rotate. Scroll or pinch to zoom.</p>
+  <model-viewer src="sa100.glb" poster="sa100-isometric.webp"
+    alt="SA-100 circuit board with field terminals, ESP32, cellular modem and central battery space"
+    camera-controls touch-action="pan-y" camera-orbit="25deg 35deg auto"
+    environment-image="neutral" shadow-intensity="1" exposure="1"
+    loading="eager">
+  </model-viewer>
+  <p id="status" aria-live="polite">Loading interactive model…</p>
+  <p><a href="sa100-isometric.webp">Isometric image</a> ·
+    <a href="sa100-top.webp">Top image</a> ·
+    <a href="sa100-bottom.webp">Bottom image</a> ·
+    <a href="sa100-front-silkscreen.svg">Silkscreen drawing</a></p>
+</main>
+<script>
+  const viewer = document.querySelector('model-viewer');
+  viewer.addEventListener('load', () => {
+    document.documentElement.dataset.modelStatus = 'loaded';
+    document.querySelector('#status').textContent = 'Interactive model loaded.';
+  });
+  viewer.addEventListener('error', event => {
+    document.documentElement.dataset.modelStatus = 'error';
+    document.querySelector('#status').textContent = 'Could not load the model. The static images are available above.';
+    console.error(event.detail);
+  });
+</script>
+</html>

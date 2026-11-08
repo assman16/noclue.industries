@@ -1,0 +1,230 @@
+.scroller {
+  position: relative;
+  height: 420vh;
+  background: var(--void);
+}
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.poster,
+.poster img,
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.poster img {
+  object-fit: cover;
+}
+.poster {
+  transition: opacity 0.6s;
+}
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(7 9 10 / 0.88) 0%, rgb(7 9 10 / 0.25) 34%, transparent 55%),
+    linear-gradient(0deg, rgb(7 9 10 / 0.75) 0%, transparent 26%);
+}
+
+.overlay {
+  position: relative;
+  height: 100%;
+  padding-top: calc(var(--header-h) + clamp(24px, 4vw, 56px));
+  padding-bottom: clamp(20px, 3vw, 40px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.intro {
+  max-width: 520px;
+  display: grid;
+  gap: 18px;
+  position: relative;
+  z-index: 2;
+}
+.title {
+  font-size: clamp(2rem, 1.2rem + 3.2vw, 4.25rem);
+}
+.body {
+  font-size: 0.9375rem;
+  max-width: 44ch;
+}
+.disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.8125rem;
+  color: var(--fg-3);
+  max-width: 48ch;
+  line-height: 1.5;
+}
+
+.labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.callout {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-6px, -50%);
+  opacity: 0;
+  transition:
+    opacity 0.5s var(--ease-out),
+    transform 0.6s var(--ease-mech);
+}
+.callout i {
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--signal);
+  border-radius: 50%;
+  background: rgb(7 9 10 / 0.8);
+  flex: none;
+}
+.callout i::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  width: 18px;
+  height: 1px;
+  background: var(--signal);
+}
+.callout b {
+  margin-left: 22px;
+  padding: 4px 8px;
+  background: rgb(7 9 10 / 0.78);
+  border: 1px solid var(--line-2);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 450;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--fg);
+  white-space: nowrap;
+}
+.labels[data-show] .callout {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.hud {
+  grid-row: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  z-index: 2;
+}
+.parts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, auto));
+  gap: 6px 28px;
+  counter-reset: part;
+}
+.parts li {
+  counter-increment: part;
+  display: grid;
+  grid-template-columns: 28px auto;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+  transition: color 0.4s;
+}
+.parts li::before {
+  content: counter(part, decimal-leading-zero);
+  grid-row: span 2;
+}
+.parts li[data-active] {
+  color: var(--fg);
+}
+.parts li[data-active]::before {
+  color: var(--signal);
+}
+.note {
+  color: var(--fg-4);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.meter {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  min-width: 200px;
+}
+.track {
+  position: relative;
+  width: 200px;
+  height: 2px;
+  background: var(--line-2);
+  overflow: hidden;
+}
+.track span {
+  position: absolute;
+  inset: 0;
+  background: var(--signal);
+  transform-origin: left;
+}
+
+/* Reduced motion: static pair */
+.static .intro {
+  margin-bottom: 48px;
+}
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.pair figure {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.pair img {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 900px) {
+  .scroller {
+    height: 320vh;
+  }
+  .vignette {
+    background:
+      linear-gradient(180deg, rgb(7 9 10 / 0.92) 0%, rgb(7 9 10 / 0.4) 38%, transparent 55%),
+      linear-gradient(0deg, rgb(7 9 10 / 0.85) 0%, transparent 30%);
+  }
+  .body,
+  .labels {
+    display: none;
+  }
+  .poster img {
+    object-fit: cover;
+    object-position: 63% 50%;
+  }
+  .parts {
+    display: none;
+  }
+  .meter {
+    justify-items: start;
+  }
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

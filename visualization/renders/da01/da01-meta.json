@@ -1,0 +1,16 @@
+{
+  "frames": 96,
+  "fps_hint": 24,
+  "steps": [
+    "lid_screws",
+    "lid",
+    "window",
+    "gasket",
+    "gland",
+    "locknut",
+    "pcb_screws",
+    "pcb",
+    "standoffs",
+    "base"
+  ]
+}

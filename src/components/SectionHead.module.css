@@ -1,0 +1,35 @@
+.head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 2vw, 32px);
+  row-gap: 24px;
+  margin-bottom: clamp(48px, 7vw, 96px);
+}
+.idx {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sect {
+  color: var(--signal);
+}
+.bar {
+  width: 48px;
+  height: 1px;
+  background: var(--line-3);
+}
+.title {
+  grid-column: 1 / span 9;
+}
+.intro {
+  grid-column: 7 / span 6;
+  font-size: var(--step-1);
+  line-height: 1.5;
+}
+@media (max-width: 900px) {
+  .title,
+  .intro {
+    grid-column: 1 / -1;
+  }
+}
