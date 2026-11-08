@@ -70,15 +70,17 @@ src/
   collections/           Projects, Services, Pages, Media, Inquiries, Users
   globals/               Home (homepage copy), SiteSettings (contact, operator, SEO)
   components/            UI components (CSS Modules)
-  content/               defaults + fallbacks, legal texts, render manifest, form options
+  content/               defaults + fallbacks, legal texts, render + photography manifests, form options
   lib/                   data layer (cached CMS queries), SEO, inquiry handling
   migrations/            PostgreSQL migrations (committed)
   styles/globals.css     design tokens + base styles
 public/
-  renders/v1/            AVIF/WebP renders (immutable cache — bump folder on re-render)
-  sequences/da01/v1/     exploded-assembly frame sequence (720/1280/1600 px)
+  renders/v2/            AVIF/WebP renders (immutable cache — bump folder on re-render; v2 = black SA-100)
+  photography/v1/        licensed, graded editorial photography (see website-assets/photography/MANIFEST.md)
+  sequences/da02/v1/     DA-02 exploded-assembly frame sequence (720/1280/1920 px)
+  sequences/da01/v1/     v1 DA-01 sequence (kept, not shown)
   brand/                 logo variants (derived from the supplied PNG, unaltered)
-  fonts/                 self-hosted Archivo + JetBrains Mono (OFL)
+  fonts/                 self-hosted Saira + JetBrains Mono (OFL)
 visualization/           Blender pipeline: libs, configs, scripts, .blend scenes, masters
 scripts/seed.ts          initial content
 ```
@@ -87,7 +89,7 @@ scripts/seed.ts          initial content
 
 Everything routine is editable in `/admin`:
 
-- **Homepage** (global) — hero lines, section titles, process steps, "why" points, contact intro
+- **Homepage** (global) — hero lines, section titles, process steps and "why" points (shown on /capabilities), assembly copy, contact intro
 - **Disciplines** — the four services, their capabilities (with optional *in-house* / *via partners* label) and deliverables
 - **Engineering archive** — projects with drafts/versions, auto reference numbers (`NCI-A-0001…`),
   status, disciplines, gallery, verified technical data and key components

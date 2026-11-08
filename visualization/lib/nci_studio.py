@@ -473,8 +473,14 @@ class Library:
         return principled(name, (0.70, 0.71, 0.72), metallic=1.0, roughness=0.3)
 
     @staticmethod
-    def soldermask(name="NCI_Soldermask", color=(0.012, 0.05, 0.025), alpha=1.0):
-        # Glossy lacquer over an epoxy base: base colour + clear coat.
+    def soldermask(name="NCI_Soldermask", color=(0.012, 0.05, 0.025), alpha=1.0, finish="gloss"):
+        """LPI soldermask: epoxy base + clear lacquer.
+        gloss: classic shiny mask. satin: semi-gloss (typical of black/matte-black masks) -
+        a broader, softer sheen that still traces grazing highlights over copper relief."""
+        if finish == "satin":
+            m = principled(name, color, roughness=0.42, specular=0.55, coat=0.55, coat_roughness=0.16, alpha=alpha)
+            add_surface_noise(m, scale=1400, strength=0.006, rough_var=0.04)
+            return m
         return principled(name, color, roughness=0.35, specular=0.5, coat=0.7, coat_roughness=0.07, alpha=alpha)
 
     @staticmethod

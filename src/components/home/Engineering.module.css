@@ -1,0 +1,477 @@
+.act {
+  position: relative;
+}
+.fill,
+.fill img {
+  width: 100%;
+  height: 100%;
+}
+.fill img {
+  object-fit: cover;
+}
+.kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: var(--fg-2);
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-stretch: 118%;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--fg);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--signal);
+  width: fit-content;
+}
+.more:hover {
+  color: var(--signal);
+}
+.provCorner {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 18px;
+  z-index: 2;
+}
+
+/* ================================================================ intro */
+
+.intro {
+  padding-block: clamp(120px, 16vw, 240px) clamp(56px, 7vw, 110px);
+  display: grid;
+  gap: clamp(18px, 2vw, 28px);
+}
+.introTitle {
+  font-size: clamp(2.4rem, 7.6vw, 10.5rem);
+  max-width: 11ch;
+}
+.introLine {
+  font-size: var(--step-1);
+  color: var(--fg-2);
+  max-width: 36ch;
+  margin-left: auto;
+  text-wrap: pretty;
+}
+
+/* ================================================================ 01 electronics */
+
+.el {
+  position: relative;
+  min-height: max(640px, 105svh);
+  display: grid;
+  align-content: start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.elPhoto {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.elPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--void) 0%, rgb(7 9 10 / 0.2) 22%, rgb(7 9 10 / 0) 50%, rgb(7 9 10 / 0.75) 82%, var(--void) 100%),
+    linear-gradient(90deg, rgb(7 9 10 / 0.7) 0%, transparent 55%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .elPhoto :global(img) {
+      animation: slowZoom linear both;
+      animation-timeline: view();
+    }
+  }
+}
+@keyframes slowZoom {
+  from {
+    transform: scale(1.14) translateY(-3%);
+  }
+  to {
+    transform: scale(1) translateY(3%);
+  }
+}
+.elHead {
+  padding-top: clamp(64px, 9vw, 140px);
+  display: grid;
+  gap: 20px;
+  justify-items: start;
+}
+.elHeadline {
+  font-size: var(--step-3);
+  font-weight: 820;
+  font-stretch: 118%;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+.giant {
+  position: absolute;
+  left: calc(var(--gutter) - 0.06em);
+  bottom: -0.16em;
+  margin: 0;
+  font-size: clamp(4rem, 19.5vw, 30rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: clamp(1px, 0.14vw, 2.5px) rgb(232 236 234 / 0.75);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- ours (the cut) */
+
+.ours {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(24px, 4vw, 64px);
+  padding-block: clamp(80px, 10vw, 160px);
+}
+.oursImg {
+  margin: 0;
+  margin-left: calc(var(--gutter) * -1);
+  overflow: hidden;
+}
+.oursImg img {
+  width: 100%;
+  height: auto;
+}
+.oursText {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 12px;
+}
+.oursTitle {
+  font-size: clamp(3rem, 7vw, 8.5rem);
+  font-weight: 900;
+  font-stretch: 125%;
+  letter-spacing: -0.035em;
+  line-height: 0.82;
+  text-transform: uppercase;
+}
+.oursTitle span {
+  color: var(--signal);
+  font-size: 0.36em;
+  letter-spacing: -0.01em;
+}
+.oursBody {
+  color: var(--fg-2);
+  max-width: 32ch;
+}
+
+/* ================================================================ 02 firmware */
+
+.fw {
+  padding-block: clamp(60px, 8vw, 130px) clamp(100px, 12vw, 200px);
+  overflow: hidden;
+}
+.fwGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: auto auto;
+  column-gap: clamp(12px, 2vw, 32px);
+}
+.fwText {
+  grid-column: 1 / span 6;
+  grid-row: 1;
+  display: grid;
+  gap: clamp(18px, 2vw, 28px);
+  align-content: start;
+  position: relative;
+  z-index: 2;
+}
+.fwTitle {
+  font-size: clamp(2.6rem, 6.4vw, 8.4rem);
+  line-height: 0.86;
+}
+.fwSub {
+  font-size: var(--step-1);
+  color: var(--fg-2);
+  max-width: 30ch;
+}
+.chips {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 560px;
+}
+.chips li {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 7px 10px;
+  border: 1px solid var(--line-2);
+  color: var(--fg-2);
+}
+.fwPhoto {
+  grid-column: 7 / -1;
+  grid-row: 1 / span 2;
+  margin: 0 calc(var(--gutter) * -1) 0 0;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+.fwPhoto img {
+  object-position: 30% 50%;
+}
+.fwPhoto figcaption,
+.dWide figcaption,
+.dTall figcaption,
+.prImg figcaption {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  right: 16px;
+}
+.fwInset {
+  grid-column: 3 / span 6;
+  grid-row: 2;
+  margin: clamp(28px, 3.4vw, 56px) 0 0;
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 12px;
+}
+.fwInset img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 40px 80px -20px rgb(0 0 0 / 0.8);
+}
+.fwInset figcaption {
+  display: grid;
+  gap: 6px;
+}
+
+/* ================================================================ 03 mechanical */
+
+.me {
+  position: relative;
+}
+.meBand {
+  position: relative;
+  height: max(560px, 92svh);
+  overflow: hidden;
+  isolation: isolate;
+}
+.meBand > :first-child {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.meBand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, var(--void) 0%, rgb(7 9 10 / 0) 26%, rgb(7 9 10 / 0) 60%, var(--void) 100%),
+    linear-gradient(90deg, rgb(7 9 10 / 0.6) 0%, transparent 50%);
+}
+.meHead {
+  position: relative;
+  padding-top: clamp(80px, 10vw, 150px);
+  display: grid;
+  gap: 18px;
+}
+.meHeadline {
+  font-size: var(--step-3);
+  font-weight: 820;
+  font-stretch: 118%;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  max-width: 13ch;
+  text-wrap: balance;
+}
+.meGiant {
+  position: absolute;
+  right: calc(var(--gutter) - 0.04em);
+  bottom: -0.17em;
+  margin: 0;
+  font-size: clamp(5rem, 27vw, 40rem);
+  line-height: 0.8;
+  color: var(--fg);
+  mix-blend-mode: difference;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.diptych {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 2vw, 32px);
+  row-gap: clamp(24px, 3vw, 48px);
+  padding-block: clamp(90px, 11vw, 180px);
+  align-items: start;
+}
+.dWide {
+  grid-column: 1 / span 7;
+  margin: 0 0 0 calc(var(--gutter) * -1);
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.dText {
+  grid-column: 9 / -1;
+  grid-row: 1;
+  align-self: start;
+  display: grid;
+  gap: 24px;
+  padding-top: clamp(8px, 2vw, 32px);
+}
+.dStatement {
+  font-size: var(--step-2);
+  font-weight: 700;
+  font-stretch: 110%;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.dTall {
+  grid-column: 9 / -1;
+  grid-row: 1;
+  margin: clamp(200px, 20vw, 340px) calc(var(--gutter) * -1) 0 0;
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+.dTall img {
+  object-position: 52% 50%;
+}
+
+/* ================================================================ 04 prototyping */
+
+.pr {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(90px, 11vw, 180px);
+}
+.prGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 96px);
+  align-items: center;
+}
+.prText {
+  display: grid;
+  gap: clamp(22px, 2.6vw, 40px);
+}
+.prTitle {
+  font-size: clamp(3rem, 8.6vw, 12rem);
+  line-height: 0.84;
+}
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px clamp(20px, 3vw, 48px);
+  border-top: 2px solid var(--signal-ink);
+  padding-top: 20px;
+}
+.split ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 6px;
+}
+.split li {
+  font-weight: 650;
+  font-stretch: 108%;
+  line-height: 1.25;
+}
+.split li::before {
+  content: '— ';
+  opacity: 0.5;
+}
+.splitNote {
+  margin-top: 14px;
+  font-size: 0.875rem;
+  color: var(--fg-2);
+  max-width: 32ch;
+}
+.prImg {
+  margin: 0 calc(var(--gutter) * -1) 0 0;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%, 0 9%);
+}
+.prImg img {
+  object-position: 42% 50%;
+}
+.prImg figcaption :global(.prov) {
+  color: rgb(255 255 255 / 0.75);
+}
+
+/* ================================================================ responsive */
+
+@media (max-width: 900px) {
+  .ours {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .oursImg {
+    margin-right: calc(var(--gutter) * -1);
+  }
+  .fwText,
+  .fwPhoto,
+  .fwInset {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .fwPhoto {
+    margin: 32px calc(var(--gutter) * -1) 0;
+    aspect-ratio: 4 / 3;
+  }
+  .fwInset {
+    grid-column: 2 / -1;
+    margin-top: -60px;
+  }
+  .dWide,
+  .dText,
+  .dTall {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .dWide {
+    margin-right: calc(var(--gutter) * -1);
+  }
+  .dTall {
+    grid-column: 4 / -1;
+    margin-top: 0;
+  }
+  .prGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .prImg {
+    margin-left: calc(var(--gutter) * -1);
+    aspect-ratio: 4 / 3;
+  }
+  .provCorner {
+    left: var(--gutter);
+    right: auto;
+    bottom: auto;
+    top: 18px;
+  }
+}
+@media (max-width: 560px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .el {
+    min-height: 92svh;
+  }
+}

@@ -55,3 +55,5 @@ node_modules/
 /visualization/renders/**/*.log
 *.blend1
 /.claude/
+__pycache__/
+*.pyc

@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import { DA01, frameUrl } from '@/content/assembly'
+import { ASSEMBLY, frameUrl } from '@/content/assembly'
 import { RENDERS } from '@/content/renders'
 
+import { Prov } from '../Prov'
 import { RenderImage } from '../RenderImage'
 import s from './Assembly.module.css'
 
@@ -13,12 +14,12 @@ type Props = { title: string; body: string; disclaimer: string }
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v))
 
 /**
- * Scroll-scrubbed exploded view. 96 prerendered frames (Blender/Cycles) are
- * drawn to a canvas; scroll position picks the frame, so the sequence plays
- * forwards and backwards with the scrollbar. Frames load progressively
- * (a coarse pass first, then the rest) once the section approaches the viewport.
+ * ACT III: the assembly. 120 prerendered frames (Blender/Cycles) drawn to a
+ * canvas; scroll position picks the frame, so the module comes apart scrolling
+ * down and goes back together scrolling up. Frames load coarse-to-fine once
+ * the section approaches the viewport.
  *
- * Reduced motion → two static renders (closed / exploded) with the part list.
+ * Reduced motion: static closed / exploded renders and a part list.
  */
 export function Assembly({ title, body, disclaimer }: Props) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -45,9 +46,9 @@ export function Assembly({ title, body, disclaimer }: Props) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const N = DA01.frames
+    const N = ASSEMBLY.frames
     const frames: (HTMLImageElement | null)[] = new Array(N).fill(null)
-    let width = DA01.widths[1]
+    let width = ASSEMBLY.widths[1]
     let started = false
     let raf = 0
     let loadedCount = 0
@@ -55,11 +56,10 @@ export function Assembly({ title, body, disclaimer }: Props) {
 
     const pickWidth = () => {
       const need = canvas.clientWidth * Math.min(window.devicePixelRatio || 1, 2)
-      return DA01.widths.find((w) => w >= need * 0.9) ?? DA01.widths[DA01.widths.length - 1]
+      return ASSEMBLY.widths.find((w) => w >= need * 0.85) ?? ASSEMBLY.widths[ASSEMBLY.widths.length - 1]
     }
 
     const draw = (index: number) => {
-      // nearest loaded frame keeps scrubbing smooth while the rest loads
       let img: HTMLImageElement | null = null
       for (let d = 0; d < N && !img; d++) img = frames[index - d] ?? frames[index + d] ?? null
       if (!img) return
@@ -68,19 +68,18 @@ export function Assembly({ title, body, disclaimer }: Props) {
       const ir = img.naturalWidth / img.naturalHeight
       ctx.fillStyle = '#07090a'
       ctx.fillRect(0, 0, cw, ch)
+      let dw: number
+      let dh: number
       if (cw / ch < 1.1) {
-        // Portrait (phones): the frames are composed with the assembly on the right
-        // (desktop text column on the left), so crop to that region and fit it to the width.
-        const sx = img.naturalWidth * DA01.portraitCrop[0]
-        const sw = img.naturalWidth * (DA01.portraitCrop[1] - DA01.portraitCrop[0])
-        const sh = img.naturalHeight
-        const dw = cw
-        const dh = (sh / sw) * dw
-        ctx.drawImage(img, sx, 0, sw, sh, 0, (ch - dh) * 0.66, dw, dh)
+        // Portrait: the assembly runs horizontally, so fit the frame to the width
+        // (slightly zoomed) and sit it in the lower-middle of the screen.
+        dw = cw * 1.22
+        dh = dw / ir
+        ctx.drawImage(img, (cw - dw) / 2, ch * 0.56 - dh / 2, dw, dh)
         return
       }
-      let dw = cw
-      let dh = cw / ir
+      dw = cw
+      dh = cw / ir
       if (dh < ch) {
         dh = ch
         dw = ch * ir
@@ -91,7 +90,9 @@ export function Assembly({ title, body, disclaimer }: Props) {
     const update = () => {
       const rect = section.getBoundingClientRect()
       const total = section.offsetHeight - window.innerHeight
-      const p = clamp(-rect.top / Math.max(1, total))
+      // The sequence completes at 86 % of the pinned scroll; the rest is a hold on the
+      // labelled, fully exploded state before the section releases.
+      const p = clamp(-rect.top / Math.max(1, total) / 0.86)
       const index = Math.round(p * (N - 1))
       setProgress(p)
       if (index !== currentRef.current) {
@@ -130,13 +131,12 @@ export function Assembly({ title, body, disclaimer }: Props) {
       if (started) return
       started = true
       width = pickWidth()
-      // coarse-to-fine order: 0, 8, 16 … then 4, 12 … then the rest
-      const order: number[] = []
-      for (const step of [8, 4, 2, 1]) for (let i = 0; i < N; i += step) if (!order.includes(i)) order.push(i)
+      const order: number[] = [0]
+      for (const step of [12, 6, 3, 1]) for (let i = 0; i < N; i += step) if (!order.includes(i)) order.push(i)
       if (!order.includes(N - 1)) order.splice(1, 0, N - 1)
       let cursor = 0
       await Promise.all(
-        Array.from({ length: 4 }, async () => {
+        Array.from({ length: 5 }, async () => {
           while (cursor < order.length && !disposed) await load(order[cursor++])
         }),
       )
@@ -163,78 +163,84 @@ export function Assembly({ title, body, disclaimer }: Props) {
     }
   }, [mode])
 
-  const u = clamp((progress - DA01.explodeStart) / (DA01.explodeEnd - DA01.explodeStart))
-  const showLabels = u > 0.96
-  const frame = Math.round(progress * (DA01.frames - 1)) + 1
-  const parts = DA01.labels
+  const u = clamp((progress - ASSEMBLY.explodeStart) / (ASSEMBLY.explodeEnd - ASSEMBLY.explodeStart))
+  const showLabels = u > 0.94
+  const frame = Math.round(progress * (ASSEMBLY.frames - 1)) + 1
+  const introOut = clamp((u - 0.04) / 0.22)
 
   if (mode === 'static') {
     return (
-      <section className={`section ${s.static}`} aria-labelledby="assembly-title">
+      <section id="assembly" className={`section ${s.static}`} aria-labelledby="assembly-title">
         <div className="wrap">
           <Intro title={title} body={body} disclaimer={disclaimer} />
+          <figure className={s.staticWide}>
+            <RenderImage asset={RENDERS.da02Exploded} sizes="100vw" />
+          </figure>
           <div className={s.pair}>
             <figure>
-              <RenderImage asset={RENDERS.da01Assembled} sizes="(max-width: 900px) 100vw, 50vw" />
-              <figcaption className="label">Closed</figcaption>
+              <RenderImage asset={RENDERS.da02Assembled} sizes="(max-width: 900px) 100vw, 50vw" />
+              <figcaption className="label">Assembled</figcaption>
             </figure>
             <figure>
-              <RenderImage asset={RENDERS.da01Exploded} sizes="(max-width: 900px) 100vw, 50vw" />
-              <figcaption className="label">Exploded</figcaption>
+              <RenderImage asset={RENDERS.da02DetailStator} sizes="(max-width: 900px) 100vw, 50vw" />
+              <figcaption className="label">Stator and rotor</figcaption>
             </figure>
           </div>
-          <PartList parts={parts} activeUntil={1} />
+          <PartList />
         </div>
       </section>
     )
   }
 
   return (
-    <section ref={sectionRef} className={s.scroller} aria-labelledby="assembly-title">
+    <section id="assembly" ref={sectionRef} className={s.scroller} aria-labelledby="assembly-title">
       <div className={s.sticky}>
-        {/* Poster: the closed assembly. Shown before frames load, and as the no-JS view. */}
-        <RenderImage asset={RENDERS.da01Assembled} sizes="100vw" className={s.poster} alt="" style={{ opacity: ready ? 0 : 1 }} />
+        <RenderImage asset={RENDERS.da02Assembled} sizes="100vw" className={s.poster} alt="" style={{ opacity: ready ? 0 : 1 }} />
         <canvas
           ref={canvasRef}
           className={s.canvas}
           role="img"
-          aria-label="Animation: the DA-01 demonstration enclosure separating into its parts as you scroll."
+          aria-label="Animation: the DA-02 demonstration actuator separating into its parts along its shaft axis as you scroll."
         />
-        <div className={s.vignette} aria-hidden="true" />
 
         <div className={`wrap ${s.overlay}`}>
-          <Intro title={title} body={body} disclaimer={disclaimer} />
+          <div style={{ opacity: 1 - introOut, translate: `0 ${-introOut * 32}px`, visibility: introOut >= 1 ? 'hidden' : undefined }}>
+            <Intro title={title} body={body} disclaimer={disclaimer} />
+          </div>
 
-          <div className={s.labels} aria-hidden="true" data-show={showLabels || undefined}>
-            {parts.map((p, i) => (
-              <span key={p.id} className={s.callout} style={{ left: `${p.x * 100}%`, top: `${p.y * 100}%`, transitionDelay: `${i * 45}ms` }}>
+          <div className={s.callouts} aria-hidden="true" data-show={showLabels || undefined}>
+            {ASSEMBLY.callouts.map((p, i) => (
+              <span
+                key={p.id}
+                className={s.callout}
+                data-side={i % 2 ? 'below' : 'above'}
+                style={{ left: `${p.x * 100}%`, top: `${p.y * 100}%`, transitionDelay: `${i * 50}ms` } as React.CSSProperties}
+              >
                 <i />
                 <b>{p.label}</b>
               </span>
             ))}
           </div>
 
-          <div className={s.hud}>
-            <PartList parts={parts} activeUntil={u} />
-            <div className={s.meter}>
-              <span className="label">
-                Frame {String(frame).padStart(3, '0')} / {DA01.frames}
-              </span>
-              <span className={s.track}>
-                <span style={{ transform: `scaleX(${progress})` }} />
-              </span>
-              <span className="label">
-                {loaded < DA01.frames && loaded > 0
-                  ? `Loading ${Math.round((loaded / DA01.frames) * 100)}%`
-                  : u >= 1
-                    ? 'Exploded'
-                    : u <= 0
-                      ? 'Assembled'
-                      : 'Separating'}
-              </span>
-            </div>
+          <div className={s.meter}>
+            <span className="label">
+              {ASSEMBLY.id} · Frame {String(frame).padStart(3, '0')} / {ASSEMBLY.frames}
+            </span>
+            <span className={s.track}>
+              <span style={{ transform: `scaleX(${progress})` }} />
+            </span>
+            <span className="label label--fg">
+              {loaded < ASSEMBLY.frames && loaded > 0
+                ? `Loading ${Math.round((loaded / ASSEMBLY.frames) * 100)}%`
+                : u >= 1
+                  ? 'Exploded'
+                  : u <= 0
+                    ? 'Assembled'
+                    : 'Separating'}
+            </span>
           </div>
         </div>
+        <PartList hidden />
       </div>
     </section>
   )
@@ -244,33 +250,32 @@ function Intro({ title, body, disclaimer }: Props) {
   return (
     <div className={s.intro}>
       <p className="label">
-        <span className="label--signal">§ 03</span> — Assembly
+        <span className="label--signal">§ 03</span> — Assembly · {ASSEMBLY.id} {ASSEMBLY.name}
       </p>
-      <h2 id="assembly-title" className={`h2 ${s.title}`}>
+      <h2 id="assembly-title" className={`display ${s.title}`}>
         {title}
       </h2>
-      <p className={`body ${s.body}`}>{body}</p>
+      <p className={s.body}>{body}</p>
       <p className={s.disclaimer}>
-        <span className="tag tag--signal">Demonstration</span>
-        <span>{disclaimer}</span>
+        <Prov kind="demo" />
+        <span className="sr-only">{disclaimer}</span>
+        <span aria-hidden="true" className={s.disclaimerText}>
+          {disclaimer}
+        </span>
       </p>
     </div>
   )
 }
 
-function PartList({ parts, activeUntil }: { parts: { id: string; label: string; note: string }[]; activeUntil: number }) {
+function PartList({ hidden }: { hidden?: boolean }) {
   return (
-    <ol className={s.parts} aria-label="Parts">
-      {parts.map((p) => {
-        const step = DA01.steps.find((st) => st.id === p.id)
-        const active = step ? activeUntil >= step.start + (step.end - step.start) * 0.5 : activeUntil >= 0.98
-        return (
-          <li key={p.id} data-active={active || undefined}>
-            <span>{p.label}</span>
-            {p.note && <span className={s.note}>{p.note}</span>}
-          </li>
-        )
-      })}
+    <ol className={hidden ? 'sr-only' : s.parts} aria-label={`${ASSEMBLY.id} parts`}>
+      {ASSEMBLY.parts.map((p) => (
+        <li key={p.id}>
+          <span>{p.label}</span>
+          {p.note && <span className={s.note}>{p.note}</span>}
+        </li>
+      ))}
     </ol>
   )
 }

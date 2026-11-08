@@ -99,6 +99,11 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 Privacy
               </Link>
             </li>
+            <li>
+              <Link className="label label--fg" href="/credits">
+                Image credits
+              </Link>
+            </li>
           </ul>
           <p className={s.stamp} title="Verbatim from the SA-100 rev 3.0 silkscreen.">
             <span>certified probably fine</span>

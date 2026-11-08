@@ -37,14 +37,12 @@ export const settingsDefaults = {
 }
 
 export const homeDefaults = {
-  heroEyebrow: 'Hardware engineering — electronics, firmware, mechanics',
-  heroLines: ['Circuits.', 'Code.', 'Chassis.'],
-  heroLede:
-    'NoClue Industries designs custom electronics, writes the firmware that runs on them and engineers the mechanical parts that hold them together. One team, from the first schematic to a prototype you can hold in your hand.',
+  heroEyebrow: 'Electronics · Firmware · Mechanical · Prototyping',
+  heroLines: ['Engineered', 'to exist.'],
+  heroLede: 'Custom electronics, firmware and mechanical parts, designed as one: from first schematic to the prototype in your hand.',
 
   disciplinesTitle: 'Four disciplines. One bench.',
-  disciplinesIntro:
-    'Hardware projects tend to stall at the interfaces — the board that does not fit the enclosure, the firmware written against last month’s pinout. We cover all four disciplines, so those interfaces get designed instead of negotiated.',
+  disciplinesIntro: 'Designed together, so the interfaces are engineered, not negotiated.',
 
   processTitle: 'From problem statement to physical hardware.',
   processIntro:
@@ -82,11 +80,10 @@ export const homeDefaults = {
     },
   ],
 
-  assemblyTitle: 'Every part has a reason to be where it is.',
-  assemblyBody:
-    'Board, enclosure and fasteners designed as one assembly: standoffs placed by the same model that defines the lid, a gasket groove sized for its seal, a counterbore for every screw. Scroll to take it apart.',
+  assemblyTitle: 'Take it apart.',
+  assemblyBody: 'Every part on one axis, separating in the order it was designed to come apart. Scroll to disassemble; scroll back to rebuild.',
   assemblyDisclaimer:
-    'DA-01 is a demonstration assembly, modelled and rendered in-house to show how we present mechanical work. It is not a client product.',
+    'DA-02 is a demonstration model, designed and rendered in-house to show how we engineer and present mechanical assemblies. It is not a client product.',
 
   whyTitle: 'One team owns the interfaces.',
   whyPoints: [
@@ -108,9 +105,8 @@ export const homeDefaults = {
     },
   ],
 
-  contactTitle: 'Describe the problem. We’ll work out the hardware.',
-  contactIntro:
-    'Tell us what you are trying to build or fix. A rough description is enough to start — we’ll come back with questions, a proposed approach and a sensible next step.',
+  contactTitle: 'Have something to build?',
+  contactIntro: 'A rough description is enough. We reply with questions, an approach and a sensible next step.',
 }
 
 type Capability = { label: string; delivery?: 'in-house' | 'partner' }

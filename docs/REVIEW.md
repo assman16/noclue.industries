@@ -39,11 +39,34 @@ Everything published comes from the design files (KiCad GLB/SVG, silkscreen). Pl
 - [ ] Some 3D parts in the KiCad export are *approximate envelopes* (A7670G, nanoSIM socket,
       JST, MF-R300). Renders show them as exported; macro shots avoid featuring them.
 
+## Redesign v2 (November 2026)
+
+- [ ] **Reference images.** The brief mentions supplied visual references, but none were attached
+      to the request. The direction follows the written description of references A–D. Send
+      them if you want the result compared against them.
+- [ ] **Photography.** 10 Unsplash-licensed photos (see `website-assets/photography/MANIFEST.md`).
+      Licences were checked on 2026-11-08. Things to confirm:
+      - **Gearbox photo:** a museum exhibit (Mercedes-Benz Museum). No logo is visible and the site
+        never names the manufacturer. Swap it out if you would rather avoid any identifiable product.
+      - **Replacements:** when you have real photos of your own work, replace the illustrative
+        ones. Real work beats stock.
+- [ ] **DA-02** is a demonstration concept (a sealed BLDC actuator). It shows mechanical
+      design and visualisation. It does **not** claim that NoClue Industries designs or sells
+      motors. Confirm you are comfortable with that subject.
+- [ ] **"We deliver"** (homepage, orange section) lists the prototyping capabilities that are
+      not flagged *partner*, including **3D printing and 3D scanning**. If either is outsourced,
+      set *Delivery: Partner* on it in *Disciplines*; it then moves to the partner column automatically.
+- [ ] **Production DB content.** Homepage copy and the SA-100 media changed. On an existing
+      deployment, run `SEED_FORCE=1 pnpm seed` in the tools container: it overwrites globals,
+      services and pages with the defaults and replaces the SA-100 images with the black v2
+      renders. **Do not run it if you have edited content in the CMS that you want to keep.**
+      In that case, re-upload the images under *Media* by hand.
+
 ## Capabilities
 
 - [ ] **3D printing / 3D scanning**: listed as capabilities (from the brief) **without** an
       "in-house" label, because ownership of the equipment wasn't confirmed. If you print/scan
-      in-house, set *Delivery: In-house* on those items in *Disciplines*.
+      in-house, set *Delivery: In-house* on those items in *Disciplines*. See also "We deliver" above.
 - [ ] Response time: no promise is shown. Set *Site settings → Response time* only if you can keep it.
 
 ## Technical / operations

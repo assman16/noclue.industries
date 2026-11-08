@@ -28,7 +28,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
       <head>
         {/* Enable reveal animations only when JS runs; content is visible without it. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
-        <link rel="preload" href="/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/saira-latin-wdth-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/fonts/jetbrains-mono-latin-wght-normal.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
       <body>

@@ -1,10 +1,8 @@
-import { ContactBlock } from '@/components/contact/ContactBlock'
 import { Assembly } from '@/components/home/Assembly'
-import { Disciplines } from '@/components/home/Disciplines'
+import { Engineering } from '@/components/home/Engineering'
+import { Feature } from '@/components/home/Feature'
 import { Hero } from '@/components/home/Hero'
-import { Process } from '@/components/home/Process'
-import { Why } from '@/components/home/Why'
-import { Work } from '@/components/home/Work'
+import { Invitation } from '@/components/home/Invitation'
 import { SITE } from '@/content/defaults'
 import { getHome, getProjects, getServices, getSettings } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
@@ -15,6 +13,15 @@ export async function generateMetadata() {
   return buildMetadata({ path: '/' })
 }
 
+/**
+ * Homepage in five acts:
+ *   I    Hero: the corporation (real SA-100 render)
+ *   II   Engineering: four disciplines, four compositions (photography → our hardware)
+ *   III  Assembly: DA-02 scroll-scrubbed exploded sequence (demonstration model)
+ *   IV   Feature: SA-100 presented as a product (real project)
+ *   V    Invitation: one question, one action
+ * Long-form explanations live on /capabilities.
+ */
 export default async function HomePage() {
   const [home, services, projects, settings] = await Promise.all([getHome(), getServices(), getProjects(), getSettings()])
 
@@ -40,17 +47,11 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
-      <Hero home={home} />
-      <Disciplines home={home} services={services} />
-      <Process home={home} />
+      <Hero home={home} services={services} />
+      <Engineering home={home} services={services} />
       <Assembly title={home.assemblyTitle} body={home.assemblyBody} disclaimer={home.assemblyDisclaimer} />
-      <Work projects={projects} />
-      <Why home={home} />
-      <section id="contact" className="section" aria-label="Start a project">
-        <div className="wrap">
-          <ContactBlock title={home.contactTitle} intro={home.contactIntro} settings={settings} />
-        </div>
-      </section>
+      <Feature projects={projects} />
+      <Invitation home={home} settings={settings} />
     </>
   )
 }

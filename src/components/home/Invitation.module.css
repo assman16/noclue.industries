@@ -1,0 +1,82 @@
+.invite {
+  position: relative;
+  min-height: max(680px, 100svh);
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  border-top: 1px solid var(--line);
+}
+.photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  margin: 0;
+  z-index: -1;
+}
+.photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--void) 0%, rgb(7 9 10 / 0) 40%);
+}
+.photo figcaption {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 18px;
+  z-index: 1;
+}
+.fill,
+.fill img {
+  width: 100%;
+  height: 100%;
+}
+.fill img {
+  object-fit: cover;
+  object-position: 30% 50%;
+}
+.inner {
+  display: grid;
+  gap: clamp(20px, 2.4vw, 36px);
+  padding-block: clamp(100px, 12vw, 180px);
+}
+.title {
+  font-size: clamp(3rem, 9.4vw, 13.5rem);
+  line-height: 0.84;
+  max-width: 9ch;
+}
+.intro {
+  font-size: var(--step-1);
+  color: var(--fg-2);
+  max-width: 34ch;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+}
+.mail {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-3);
+  padding-bottom: 3px;
+}
+.mail:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+@media (max-width: 900px) {
+  .photo {
+    width: 100%;
+    opacity: 0.45;
+  }
+  .photo::after {
+    background: linear-gradient(0deg, var(--void) 10%, rgb(7 9 10 / 0.4) 100%);
+  }
+}

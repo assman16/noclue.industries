@@ -3,9 +3,13 @@
   python visualization/scripts/export_web.py            # stills + sequence + OG image
   python visualization/scripts/export_web.py --only stills|sequence|og
 
-Stills    visualization/renders/**.png → public/renders/v1/<name>-<w>.{avif,webp}
+Stills    visualization/renders/**.png → public/renders/<RENDER_VERSION>/<name>-<w>.{avif,webp}
           + lossless masters kept in visualization/renders (not shipped)
-Sequence  visualization/renders/da01/seq/*.png → public/sequences/da01/v1/<w>/da01-NNN.webp
+Sequence  visualization/renders/<seq>/seq/*.png → public/sequences/<seq>/<SEQ_VERSION>/<w>/<seq>-NNN.webp
+
+Versioning: the public folders are served with immutable cache headers, so a
+re-render that changes what an image shows (e.g. the SA-100 soldermask going
+from green to black in v2) must go to a new version folder, never overwrite.
 OG        public/og/noclue-industries-og.jpg (1200x630, hero render + logo)
 
 All images are composited over the site background (#07090A), so they sit
@@ -27,6 +31,7 @@ R = os.path.join(ROOT, "visualization", "renders")
 PUB = os.path.join(ROOT, "public")
 BG = (7, 9, 10)
 
+RENDER_VERSION = "v2"  # v2: SA-100 black soldermask / white silkscreen, DA-02 actuator
 STILLS = [
     ("sa100/sa100-hero.png", "sa100-hero"),
     ("sa100/sa100-detail.png", "sa100-detail"),
@@ -34,13 +39,17 @@ STILLS = [
     ("sa100/sa100-terminals.png", "sa100-terminals"),
     ("sa100/sa100-top.png", "sa100-top"),
     ("sa100/sa100-iso.png", "sa100-iso"),
-    ("da01/da01-assembled.png", "da01-assembled"),
-    ("da01/da01-exploded.png", "da01-exploded"),
-    ("da01/da01-detail-screw.png", "da01-detail-screw"),
-    ("da01/da01-detail-gasket.png", "da01-detail-gasket"),
+    ("sa100/sa100-plan_raking.png", "sa100-plan"),
+    ("sa100/sa100-cine_corner.png", "sa100-corner"),
+    ("sa100/sa100-macro_mark.png", "sa100-mark"),
+    ("da02/da02-assembled.png", "da02-assembled"),
+    ("da02/da02-exploded.png", "da02-exploded"),
+    ("da02/da02-hero.png", "da02-hero"),
+    ("da02/da02-detail-stator.png", "da02-detail-stator"),
 ]
+SEQUENCES = {"da02": "v1"}  # name -> version folder
 WIDTHS = (960, 1600, 2400)
-SEQ_WIDTHS = (720, 1280, 1600)
+SEQ_WIDTHS = (720, 1280, 1920)
 
 
 def flatten(path):
@@ -50,7 +59,7 @@ def flatten(path):
 
 
 def export_stills():
-    out = os.path.join(PUB, "renders", "v1")
+    out = os.path.join(PUB, "renders", RENDER_VERSION)
     os.makedirs(out, exist_ok=True)
     for rel, name in STILLS:
         src = os.path.join(R, rel)
@@ -67,27 +76,30 @@ def export_stills():
 
 
 def export_sequence():
-    frames = sorted(glob.glob(os.path.join(R, "da01", "seq", "da01-*.png")))
-    if not frames:
-        print("no sequence frames found")
-        return
-    for w in SEQ_WIDTHS:
-        os.makedirs(os.path.join(PUB, "sequences", "da01", "v1", str(w)), exist_ok=True)
-    total = {w: 0 for w in SEQ_WIDTHS}
-    for f in frames:
-        im = flatten(f)
-        name = os.path.splitext(os.path.basename(f))[0]
+    for seq, version in SEQUENCES.items():
+        frames = sorted(glob.glob(os.path.join(R, seq, "seq", f"{seq}-*.png")))
+        if not frames:
+            print("no sequence frames found for", seq)
+            continue
+        base = os.path.join(PUB, "sequences", seq, version)
         for w in SEQ_WIDTHS:
-            h = round(im.height * w / im.width)
-            p = os.path.join(PUB, "sequences", "da01", "v1", str(w), f"{name}.webp")
-            im.resize((w, h), Image.LANCZOS).save(p, "WEBP", quality=72 if w > 1000 else 70, method=6)
-            total[w] += os.path.getsize(p)
-    for w, b in total.items():
-        print(f"sequence {w}w: {len(frames)} frames, {b / 1e6:.1f} MB total")
+            os.makedirs(os.path.join(base, str(w)), exist_ok=True)
+        total = {w: 0 for w in SEQ_WIDTHS}
+        for f in frames:
+            im = flatten(f)
+            name = os.path.splitext(os.path.basename(f))[0]
+            for w in SEQ_WIDTHS:
+                h = round(im.height * w / im.width)
+                p = os.path.join(base, str(w), f"{name}.webp")
+                r = im.resize((w, h), Image.LANCZOS) if w != im.width else im
+                r.save(p, "WEBP", quality=74 if w > 1000 else 70, method=6)
+                total[w] += os.path.getsize(p)
+        for w, b in total.items():
+            print(f"sequence {seq} {w}w: {len(frames)} frames, {b / 1e6:.1f} MB total")
 
 
 def export_og():
-    src = os.path.join(R, "sa100", "sa100-hero.png")
+    src = os.path.join(R, "sa100", "sa100-plan_raking.png")
     if not os.path.exists(src):
         return
     im = flatten(src)

@@ -1,22 +1,24 @@
 /* ==========================================================================
    NoClue Industries — design system
    Near-future industrial: void blacks, gunmetal, cool white, one signal accent.
+   Display type: Saira (OFL) at its expanded end, echoing the INDUSTRIES lettering
+   of the logo. Technical markings: JetBrains Mono.
    ========================================================================== */
 
 @font-face {
-  font-family: 'Archivo NCI';
-  src: url('/fonts/archivo-latin-wdth-normal.woff2') format('woff2-variations');
+  font-family: 'Saira NCI';
+  src: url('/fonts/saira-latin-wdth-normal.woff2') format('woff2-variations');
   font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-stretch: 50% 125%;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: 'Archivo NCI';
-  src: url('/fonts/archivo-latin-ext-wdth-normal.woff2') format('woff2-variations');
+  font-family: 'Saira NCI';
+  src: url('/fonts/saira-latin-ext-wdth-normal.woff2') format('woff2-variations');
   font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-stretch: 50% 125%;
   font-display: swap;
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
     U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
@@ -37,14 +39,14 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
     U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-/* Metric-matched fallback keeps layout shift low while Archivo loads. */
+/* Metric-approximated fallback keeps layout shift low while Saira loads. */
 @font-face {
-  font-family: 'Archivo Fallback';
+  font-family: 'Saira Fallback';
   src: local('Arial');
-  ascent-override: 87.8%;
-  descent-override: 21%;
+  ascent-override: 96%;
+  descent-override: 26%;
   line-gap-override: 0%;
-  size-adjust: 104%;
+  size-adjust: 101%;
 }
 
 :root {
@@ -81,7 +83,7 @@
   --line-ink-2: rgb(11 15 17 / 0.3);
 
   /* Type */
-  --font-sans: 'Archivo NCI', 'Archivo Fallback', system-ui, sans-serif;
+  --font-sans: 'Saira NCI', 'Saira Fallback', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono NCI', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   --step--1: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
@@ -90,7 +92,8 @@
   --step-2: clamp(1.5rem, 1.25rem + 1.1vw, 2.25rem);
   --step-3: clamp(2rem, 1.4rem + 2.6vw, 3.75rem);
   --step-4: clamp(2.6rem, 1.6rem + 4.6vw, 6rem);
-  --step-5: clamp(3.4rem, 1.4rem + 9.4vw, 11.5rem);
+  --step-5: clamp(3.2rem, 1rem + 10vw, 13rem);
+  --step-6: clamp(4rem, 0.5rem + 15vw, 20rem);
 
   /* Layout */
   --gutter: clamp(20px, 4vw, 72px);
@@ -246,27 +249,33 @@ p {
 
 .display {
   font-family: var(--font-sans);
-  font-weight: 860;
+  font-weight: 900;
   font-stretch: 125%;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
   line-height: 0.86;
   text-transform: uppercase;
 }
+/* Outlined display type: engraved / machined-plate feeling, used sparingly. */
+.display--outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px currentColor;
+}
 
 .h2 {
-  font-weight: 800;
-  font-stretch: 118%;
+  font-weight: 880;
+  font-stretch: 125%;
   font-size: var(--step-4);
-  letter-spacing: -0.03em;
-  line-height: 0.92;
+  letter-spacing: -0.025em;
+  line-height: 0.9;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
 .h3 {
-  font-weight: 760;
+  font-weight: 780;
   font-stretch: 112%;
   font-size: var(--step-2);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   line-height: 1.02;
 }
 
@@ -317,7 +326,7 @@ p {
 /* ---------------------------------------------------------------- controls */
 
 .btn {
-  --h: 52px;
+  --h: 54px;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -329,10 +338,11 @@ p {
   background: transparent;
   color: var(--fg);
   font-family: var(--font-sans);
-  font-size: 0.9375rem;
-  font-weight: 650;
-  font-stretch: 110%;
-  letter-spacing: -0.005em;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-stretch: 118%;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
@@ -565,4 +575,69 @@ p {
 .rich strong {
   color: var(--fg);
   font-weight: 650;
+}
+
+/* ---------------------------------------------------------------- surfaces */
+
+/* Full signal-orange field. Ink is near-black; used for one composition per page at most. */
+.on-signal {
+  background: var(--signal);
+  color: var(--signal-ink);
+  color-scheme: light;
+  --fg: var(--signal-ink);
+  --fg-2: rgb(22 8 1 / 0.78);
+  --fg-3: rgb(22 8 1 / 0.6);
+  --fg-4: rgb(22 8 1 / 0.4);
+  --line: rgb(22 8 1 / 0.16);
+  --line-2: rgb(22 8 1 / 0.3);
+  --line-3: rgb(22 8 1 / 0.55);
+}
+.on-signal ::selection {
+  background: var(--signal-ink);
+  color: var(--signal);
+}
+.on-signal :focus-visible {
+  outline-color: var(--signal-ink);
+}
+.on-signal .btn {
+  color: var(--signal-ink);
+  border-color: var(--signal-ink);
+}
+.on-signal .btn::before {
+  background: var(--signal-ink);
+}
+.on-signal .btn:hover,
+.on-signal .btn:focus-visible {
+  color: var(--signal);
+}
+
+/* ---------------------------------------------------------------- provenance */
+
+/* Every image on the site says what it is: our hardware, our demonstration
+   model, or licensed illustrative photography. */
+.prov {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+.prov::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border: 1px solid currentColor;
+}
+.prov--real {
+  color: var(--signal);
+}
+.prov--real::before {
+  background: currentColor;
+}
+.prov--demo::before {
+  background: linear-gradient(135deg, currentColor 50%, transparent 50%);
 }

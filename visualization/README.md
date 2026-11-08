@@ -19,12 +19,14 @@ visualization/
   configs/
     sa100.py          SA-100 shots + lighting rigs (template for any new board)
   assemblies/
-    da01_enclosure.py DA-01 demonstration enclosure: build → explode → render
+    da02_actuator.py  DA-02 demonstration actuator (shown on the site): build → explode → render
+    da01_enclosure.py DA-01 demonstration enclosure (v1, kept as a simpler reference)
   scripts/
     inspect_model.py  print objects / sizes / materials of any GLB
     render_pcb.py     render PCB shots from a config
     composite.py      flatten onto #07090A, export WebP/AVIF at several widths
-    export_web.py     renders → public/renders/v1 + sequence → public/sequences/da01/v1 + OG image
+    export_web.py     renders → public/renders/<RENDER_VERSION> + sequences → public/sequences/<seq>/<ver> + OG image
+    grade_photos.py   licensed photography → house grade → public/photography/v1
     prepare_brand_assets.py  logo variants + favicon crop (logo itself unaltered)
   renders/            masters (16-bit PNG, alpha) + saved .blend scenes  ← keep these
   drafts/             throwaway previews (git-ignored)
@@ -78,7 +80,45 @@ What the pipeline changes — and doesn't:
 5. `python visualization/scripts/export_web.py` → web assets. Copy `da01-labels.json` style
    output to `src/content/` and update `src/content/assembly.ts` (frame count, steps).
 
-## DA-01 (demonstration assembly)
+## SA-100 board finish
+
+The board is specified with a **black soldermask and white silkscreen**. KiCad's glTF export
+carries its default green, so `configs/sa100.py` overrides it in `BOARD_COLORS` (black LPI mask,
+`soldermask_finish: "satin"` = semi-gloss clear coat, white ink). Change finishes there, at
+material level, never in post. Black masks need light to read on a black page:
+`rig_cinematic` and `rig_raking` use long strip lights whose reflections sweep across the mask,
+and `rig_technical_black` lets the overhead softbox reflect, so the plan views read as a
+graphite plate.
+
+Shots: `hero`, `detail`, `soic`, `terminals`, `top`, `iso`, plus the campaign shots
+`plan_raking`, `cine_corner` and `macro_mark`.
+
+## Versioning web output
+
+`/renders`, `/sequences` and `/photography` are served with immutable cache headers. When a
+re-render changes what an image shows, bump `RENDER_VERSION` in `export_web.py` (and
+`RENDER_BASE` in `src/content/renders.ts`) instead of overwriting files. v2 is the black SA-100.
+
+## DA-02 (demonstration assembly, on the site)
+
+A sealed BLDC actuator module, designed as an **original concept** for this pipeline. It is *not a
+product*. All parts sit on one axis (local Z) and explode along it, outermost first. Front and
+rear unstack simultaneously, and the rotor is withdrawn once the front cover is off. Dimensions
+and part list are in the script docstring. 18 explode steps, a 120-frame timeline (8 hold / 100
+explode / 12 hold), and a camera that pulls back while orbiting.
+
+```bash
+"$BLENDER" -b --factory-startup --python visualization/assemblies/da02_actuator.py --     --mode all [--draft] [--frames 1-120x8] [--stills hero,exploded] [--overwrite]
+python visualization/scripts/export_web.py --only sequence
+cp visualization/renders/da02/da02-labels.json src/content/
+```
+
+**Note on EXACT booleans:** joining overlapping meshes before a boolean can wipe the result,
+and booleans occasionally leave stray vertices at the origin, which stretch into thin lines
+during the explode. `strip_outside()` removes them. Check new parts with a draft frame from the
+fully exploded end of the timeline.
+
+## DA-01 (demonstration assembly, v1)
 
 An **original** enclosure designed for this pipeline — *not a client product*. The board's
 silkscreen reads "DEMONSTRATION BOARD". Key dimensions (mm): base 120 × 80 × 30, R8, 5 mm
@@ -94,7 +134,7 @@ ISO 4762 M3 × 12; 38 × 14 glass window; M12 gland.
 | `still` | 384 spp — web stills |
 | `still_light` | 192 spp — stills when VRAM is tight |
 | `master` | 3840 × 2160, 512 spp |
-| `sequence` | 1600 × 900, 48 spp + OIDN — animation frames |
+| `sequence` | 1600 × 900 (DA-02 renders it at 1920 × 1080), 48 spp + OIDN — animation frames |
 
 All renders use AgX (Medium High Contrast), transparent film and a shadow catcher; compositing
 onto `#07090A` happens in `composite.py`/`export_web.py` so images sit seamlessly on the site.

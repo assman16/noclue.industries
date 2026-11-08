@@ -57,7 +57,7 @@ export function Header() {
         <nav className={s.nav} aria-label="Primary">
           <ol>
             {NAV.map((item, i) => {
-              const active = item.href !== '/#process' && pathname.startsWith(item.href)
+              const active = !item.href.includes('#') && pathname.startsWith(item.href)
               return (
                 <li key={item.href}>
                   <Link href={item.href} className={s.navLink} aria-current={active ? 'page' : undefined}>

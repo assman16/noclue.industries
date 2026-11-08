@@ -1,9 +1,13 @@
 import Link from 'next/link'
 
 import { Arrow } from '@/components/Arrow'
+import { Process } from '@/components/home/Process'
+import { Why } from '@/components/home/Why'
 import { PageHead } from '@/components/PageHead'
+import { Prov } from '@/components/Prov'
 import { RenderImage } from '@/components/RenderImage'
-import { RENDERS } from '@/content/renders'
+import { PHOTOS, type PhotoAsset } from '@/content/photography'
+import { RENDERS, type RenderAsset } from '@/content/renders'
 import { getHome, getServices } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
 
@@ -20,7 +24,13 @@ export async function generateMetadata() {
   })
 }
 
-const VISUALS = [RENDERS.sa100Top, RENDERS.sa100Detail, RENDERS.da01Exploded, RENDERS.da01DetailGasket]
+const VISUALS: Record<string, RenderAsset | PhotoAsset> = {
+  electronics: RENDERS.sa100Top,
+  firmware: RENDERS.sa100Detail,
+  mechanical: PHOTOS.pocket,
+  prototyping: PHOTOS.printer,
+}
+const visualFor = (slug: string, i: number) => VISUALS[slug] ?? Object.values(VISUALS)[i % 4]
 
 export default async function CapabilitiesPage() {
   const [services, home] = await Promise.all([getServices(), getHome()])
@@ -56,8 +66,14 @@ export default async function CapabilitiesPage() {
               <p className={s.headline}>{svc.headline}</p>
               <p className="body">{svc.summary}</p>
               <figure className={s.visual} data-reveal>
-                <RenderImage asset={VISUALS[i % VISUALS.length]} sizes="(max-width: 960px) 100vw, 40vw" />
-                <figcaption className="deco">{VISUALS[i % VISUALS.length].source}</figcaption>
+                <RenderImage asset={visualFor(svc.slug, i)} sizes="(max-width: 960px) 100vw, 40vw" />
+                <figcaption>
+                  {'credit' in visualFor(svc.slug, i) ? (
+                    <Prov kind="illustrative" photo={visualFor(svc.slug, i) as PhotoAsset} />
+                  ) : (
+                    <Prov kind={visualFor(svc.slug, i).provenance} />
+                  )}
+                </figcaption>
               </figure>
             </div>
             <div className={s.lists}>
@@ -108,12 +124,14 @@ export default async function CapabilitiesPage() {
             <Link href="/contact" className="btn btn--signal">
               Start a project <Arrow />
             </Link>
-            <Link href="/#process" className="btn">
+            <a href="#process" className="btn">
               How the process works
-            </Link>
+            </a>
           </div>
         </section>
       </div>
+      <Process home={home} index="05" />
+      <Why home={home} />
     </>
   )
 }

@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
       // Versioned folders: bump v1 → v2 when re-rendering.
       { source: '/renders/:path*', headers: immutable },
       { source: '/sequences/:path*', headers: immutable },
+      { source: '/photography/:path*', headers: immutable },
       { source: '/fonts/:path*', headers: immutable },
       { source: '/brand/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=604800' }] },
     ]

@@ -4,7 +4,9 @@
  *   pnpm seed               # create missing content, never overwrite edits
  *   SEED_FORCE=1 pnpm seed  # also overwrite globals/services/pages/project with defaults
  *
- * Idempotent: documents are matched by slug, media by filename.
+ * Idempotent: documents are matched by slug, media by filename. With --force,
+ * existing media get their file and alt text replaced (e.g. after the v2
+ * re-render of the SA-100 with its black soldermask).
  * Uses `payload run`, so it works locally and inside the production container.
  */
 import fs from 'fs'
@@ -44,8 +46,20 @@ async function upsertBySlug(payload: Payload, collection: 'services' | 'pages' |
 async function media(payload: Payload, file: string, alt: string, caption: string, kind: 'render' | 'photo' | 'cad' | 'drawing' | 'diagram' = 'render') {
   const filename = path.basename(file)
   const existing = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, overrideAccess: true })
-  if (existing.docs[0]) return existing.docs[0]
   const abs = path.resolve(ROOT, file)
+  if (existing.docs[0]) {
+    if (!force || !fs.existsSync(abs)) return existing.docs[0]
+    payload.logger.info(`  ~ media ${filename} replaced`)
+    return payload.update({
+      collection: 'media',
+      id: existing.docs[0].id,
+      data: { alt, caption, kind },
+      filePath: abs,
+      overwriteExistingFiles: true,
+      overrideAccess: true,
+      context: ctx,
+    })
+  }
   if (!fs.existsSync(abs)) {
     payload.logger.warn(`  ! media source missing: ${file}`)
     return null
@@ -102,15 +116,18 @@ async function run() {
   })
 
   // ------------------------------------------------------------- SA-100 archive entry
-  const R = 'public/renders/v1' // flattened, web-ready masters produced by visualization/scripts/export_web.py
-  const hero = await media(payload, `${R}/sa100-hero-2400.webp`, 'The SA-100 circuit board in low light, a row of ten green spring terminals running diagonally across the frame.', 'SA-100 rev 3.0 — rendered from the KiCad 3D export')
-  const top = await media(payload, `${R}/sa100-top-2400.webp`, 'Orthographic top view of the SA-100 board with its silkscreen legends: 12V IN, TEST/ACK, TAMPER, FIRE, MONITOR 1–4, SIREN IN and SIREN OUT.', 'Top view — terminal legends and the 65 × 52 mm battery bay')
-  const detail = await media(payload, `${R}/sa100-detail-2400.webp`, 'Macro view of the ESP32-S3-WROOM-1 module and its gold castellated pads.', 'ESP32-S3-WROOM-1 module')
-  const iso = await media(payload, `${R}/sa100-iso-2400.webp`, 'Isometric view of the complete SA-100 board.', 'Isometric view')
+  const R = 'public/renders/v2' // flattened, web-ready masters produced by visualization/scripts/export_web.py
+  const plan = await media(payload, `${R}/sa100-plan-2400.webp`, 'The black SA-100 board seen from above at an angle under a low raking light: white silkscreen legends, ICs and a row of terminal blocks.', 'SA-100 rev 3.0, rendered from the production KiCad data')
+  const corner = await media(payload, `${R}/sa100-corner-2400.webp`, 'Macro of the SA-100 board corner: the ESP32-S3 module with gold castellated pads and the USB-C receptacle on black soldermask.', 'ESP32-S3 module and USB-C')
+  const hero = await media(payload, `${R}/sa100-hero-2400.webp`, 'The black SA-100 circuit board in low light, a row of ten green spring terminals with orange levers along its front edge.', 'SA-100 rev 3.0, rendered from the KiCad 3D export')
+  const top = await media(payload, `${R}/sa100-top-2400.webp`, 'Orthographic top view of the black SA-100 board with its white silkscreen legends: 12V IN, TEST/ACK, TAMPER, FIRE, MONITOR 1–4, SIREN IN and SIREN OUT.', 'Top view: terminal legends and the 65 × 52 mm battery bay')
+  const detail = await media(payload, `${R}/sa100-detail-2400.webp`, 'Macro view of the ESP32-S3-WROOM-1 module and its gold castellated pads on the black board.', 'ESP32-S3-WROOM-1 module')
+  const iso = await media(payload, `${R}/sa100-iso-2400.webp`, 'Isometric view of the complete black SA-100 board.', 'Isometric view')
   const terminals = await media(payload, `${R}/sa100-terminals-2400.webp`, 'Close-up of the two-pole spring terminals along the board edge.', 'Field terminals')
-  const soic = await media(payload, `${R}/sa100-soic-2400.webp`, 'SOIC integrated circuits on the input side of the SA-100 board.', 'Input-side ICs')
+  const soic = await media(payload, `${R}/sa100-soic-2400.webp`, 'SOIC integrated circuits on the input side of the black SA-100 board.', 'Input-side ICs')
+  const mark = await media(payload, `${R}/sa100-mark-2400.webp`, 'Macro of the white silkscreen maker’s mark on the SA-100: the noclue logo, “noclue.industries” and “rev 3.0”.', 'Silkscreen maker’s mark')
 
-  const gallery = [hero, top, detail, terminals, soic].filter(Boolean).map((m) => ({ image: m!.id }))
+  const gallery = [plan, corner, top, detail, mark, terminals, soic, hero].filter(Boolean).map((m) => ({ image: m!.id }))
 
   await upsertBySlug(payload, 'projects', 'sa-100', {
     title: 'SA-100',
@@ -123,7 +140,7 @@ async function run() {
     disciplines: ['electronics'],
     featured: true,
     order: 10,
-    heroImage: iso?.id ?? hero?.id,
+    heroImage: plan?.id ?? iso?.id ?? hero?.id,
     gallery,
     work: [
       { item: 'Schematic capture and PCB layout in KiCad', discipline: 'electronics' },
@@ -153,7 +170,7 @@ async function run() {
       payload,
       `The terminal legends on the silkscreen read **12V IN, TEST/ACK, TAMPER, FIRE, MONITOR 1–4, SIREN IN** and **SIREN OUT**. The battery bay is kept free of components and copper so a 65 × 52 mm cell can sit directly on the board.
 
-The renders on this page were produced in Blender from the board's KiCad 3D export. Lighting and surface finishes were set up for presentation; the geometry is unaltered.
+The renders on this page were produced in Blender from the board's KiCad 3D export. The geometry is unaltered. The board is specified with a black soldermask and white silkscreen; KiCad's export carries a default green, so the mask material was corrected in the render pipeline. Lighting and camera were set up for presentation.
 
 One line on the silkscreen, reproduced verbatim: *certified probably fine*.`,
     ),

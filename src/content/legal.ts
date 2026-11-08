@@ -92,13 +92,13 @@ The same company operates NoClue Studio (noclue.studio), our software, web and a
 
 The content of this website is provided for general information about our engineering services. It does not constitute an offer; individual projects are agreed in writing.
 
-Images labelled as renders are computer-generated from real design data (ECAD/CAD files). The DA-01 exploded assembly is a demonstration model created to illustrate our visualisation and mechanical design process; it is not a client product.
+Every image on this site is labelled with what it is. **NoClue hardware** marks renders computer-generated from real design data (ECAD/CAD files). **Demonstration model** marks the DA-02 actuator (and the earlier DA-01 enclosure), which are concept assemblies modelled to illustrate our visualisation and mechanical design process. They are not client products. **Illustrative photography** marks licensed stock photographs by third-party photographers, used to show the kind of work each discipline involves. They do not show our premises, equipment, clients or projects. The photographers are credited on the [image credits](/credits) page.
 
 Product names, part numbers and trademarks of third parties mentioned on this website belong to their respective owners and are used only to describe components in our designs.
 
 ## Copyright
 
-Unless stated otherwise, texts, images, renders and graphics on this website are © Sapfir Research & Development s. r. o. Please ask before reusing them.
+Unless stated otherwise, texts, renders and graphics on this website are © Sapfir Research & Development s. r. o. Please ask before reusing them. Illustrative photographs remain the work of their photographers and are used under the Unsplash License. See [image credits](/credits).
 
-Fonts: Archivo and JetBrains Mono, used under the SIL Open Font License 1.1.
+Fonts: Saira and JetBrains Mono, used under the SIL Open Font License 1.1.
 `

@@ -1,0 +1,28 @@
+{
+  "frames": 120,
+  "fps_hint": 24,
+  "steps": [
+    "circlip",
+    "flange",
+    "front_screws",
+    "seal",
+    "cover",
+    "front_bearing",
+    "front_oring",
+    "rotor",
+    "stator",
+    "connector",
+    "rear_screws",
+    "rear_cap",
+    "rear_oring",
+    "pcb",
+    "standoffs",
+    "magnet",
+    "rear_bearing",
+    "housing"
+  ],
+  "explode_window": [
+    9,
+    109
+  ]
+}

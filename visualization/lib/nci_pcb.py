@@ -97,7 +97,8 @@ def upgrade_materials(meshes: list[bpy.types.Object], board_colors: dict | None 
 
     lib_board = {
         "fr4": lambda c: Library.fr4(color=board_colors.get("fr4", c)),
-        "soldermask": lambda c: Library.soldermask(color=board_colors.get("soldermask", c)),
+        "soldermask": lambda c: Library.soldermask(color=board_colors.get("soldermask", c),
+                                                  finish=board_colors.get("soldermask_finish", "gloss")),
         "silkscreen": lambda c: Library.silkscreen(color=board_colors.get("silkscreen", (0.85, 0.84, 0.78))),
         "pads": lambda c: Library.enig(),
     }

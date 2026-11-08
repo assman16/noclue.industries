@@ -8,7 +8,7 @@ import s from './Process.module.css'
  * PCB-style trace with vias. The trace "routes" itself as the section scrolls
  * into view (CSS scroll timeline where supported, static otherwise).
  */
-export function Process({ home }: { home: HomeContent }) {
+export function Process({ home, index = '02' }: { home: HomeContent; index?: string }) {
   const steps = home.processSteps
   return (
     <section id="process" className={`section sheet ${s.process}`} aria-labelledby="process-title">
@@ -26,7 +26,7 @@ export function Process({ home }: { home: HomeContent }) {
       </div>
 
       <div className="wrap">
-        <SectionHead index="02" label="Process" title={home.processTitle} intro={home.processIntro} id="process-title" />
+        <SectionHead index={index} label="Process" title={home.processTitle} intro={home.processIntro} id="process-title" />
 
         <div className={s.track}>
           <svg className={s.trace} viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true">
