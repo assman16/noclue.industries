@@ -6,6 +6,7 @@ import { Invitation } from '@/components/home/Invitation'
 import { SITE } from '@/content/defaults'
 import { getHome, getProjects, getServices, getSettings } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
+import { assetBase } from '@/lib/storage'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,7 +50,7 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <Hero home={home} services={services} />
       <Engineering home={home} services={services} />
-      <Assembly title={home.assemblyTitle} body={home.assemblyBody} disclaimer={home.assemblyDisclaimer} />
+      <Assembly title={home.assemblyTitle} body={home.assemblyBody} disclaimer={home.assemblyDisclaimer} origin={assetBase()} />
       <Feature projects={projects} />
       <Invitation home={home} settings={settings} />
     </>

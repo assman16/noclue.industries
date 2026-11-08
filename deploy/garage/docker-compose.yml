@@ -1,0 +1,64 @@
+# Garage object storage for NoClue Industries: deploy as its OWN Coolify resource
+# ("Docker Compose" → point it at this file, or paste it in).
+#
+# Domains (Coolify → service "garage" → Domains):
+#   https://s3.noclue.industries:3900       S3 API      (the app + upload script talk to this)
+#   https://assets.noclue.industries:3902   public web  (browsers load images from this = ASSET_URL)
+# The admin API (3903) and RPC (3901) are NOT given domains: they stay inside Docker.
+#
+# Required environment variables (Coolify → Environment, mark as secret):
+#   GARAGE_RPC_SECRET     openssl rand -hex 32
+#   GARAGE_ADMIN_TOKEN    openssl rand -base64 32
+#   GARAGE_METRICS_TOKEN  openssl rand -base64 32
+#
+# First-time setup (layout, buckets, keys) is in docs/STORAGE.md.
+services:
+  garage:
+    image: dxflrs/garage:v2.5.0
+    restart: unless-stopped
+    environment:
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET:?set GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN:?set GARAGE_ADMIN_TOKEN}
+      GARAGE_METRICS_TOKEN: ${GARAGE_METRICS_TOKEN:?set GARAGE_METRICS_TOKEN}
+    volumes:
+      # Coolify creates this file from `content`; plain Docker Compose uses ./garage.toml.
+      - type: bind
+        source: ./garage.toml
+        target: /etc/garage.toml
+        read_only: true
+        content: |
+          metadata_dir = "/var/lib/garage/meta"
+          data_dir = "/var/lib/garage/data"
+          db_engine = "lmdb"
+          metadata_auto_snapshot_interval = "6h"
+          replication_factor = 1
+          compression_level = 1
+          rpc_bind_addr = "[::]:3901"
+          rpc_public_addr = "127.0.0.1:3901"
+
+          [s3_api]
+          s3_region = "garage"
+          api_bind_addr = "[::]:3900"
+          root_domain = ".s3.noclue.industries"
+
+          [s3_web]
+          bind_addr = "[::]:3902"
+          root_domain = ".web.noclue.industries"
+          index = "index.html"
+
+          [admin]
+          api_bind_addr = "[::]:3903"
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+    expose:
+      - '3900'
+      - '3902'
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  garage-meta:
+  garage-data:

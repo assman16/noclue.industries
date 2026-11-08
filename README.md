@@ -75,10 +75,8 @@ src/
   migrations/            PostgreSQL migrations (committed)
   styles/globals.css     design tokens + base styles
 public/
-  renders/v2/            AVIF/WebP renders (immutable cache — bump folder on re-render; v2 = black SA-100)
-  photography/v1/        licensed, graded editorial photography (see website-assets/photography/MANIFEST.md)
-  sequences/da02/v1/     DA-02 exploded-assembly frame sequence (720/1280/1920 px)
-  sequences/da01/v1/     v1 DA-01 sequence (kept, not shown)
+  renders/ photography/ sequences/   NOT in git: generated locally, served from Garage S3
+                         (ASSET_URL); upload with `pnpm assets:upload` — see docs/STORAGE.md
   brand/                 logo variants (derived from the supplied PNG, unaltered)
   fonts/                 self-hosted Saira + JetBrains Mono (OFL)
 visualization/           Blender pipeline: libs, configs, scripts, .blend scenes, masters

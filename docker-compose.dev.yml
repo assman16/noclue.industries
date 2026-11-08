@@ -1,5 +1,7 @@
-# Local development database only. The app runs on the host with `pnpm dev`.
-#   docker compose -f docker-compose.dev.yml up -d
+# Local development services. The app runs on the host with `pnpm dev`.
+#   docker compose -f docker-compose.dev.yml up -d                 # PostgreSQL
+#   docker compose -f docker-compose.dev.yml --profile s3 up -d    # + local Garage (S3) for testing
+# Garage setup for the local instance: docs/STORAGE.md → "Local test".
 services:
   db:
     image: postgres:17-alpine
@@ -18,5 +20,17 @@ services:
       timeout: 3s
       retries: 10
 
+  garage:
+    profiles: ['s3']
+    image: dxflrs/garage:v2.5.0
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3900:3900' # S3 API
+      - '127.0.0.1:3902:3902' # public web endpoint
+    volumes:
+      - ./deploy/garage/garage.dev.toml:/etc/garage.toml:ro
+      - garage-dev:/var/lib/garage
+
 volumes:
   pgdata-dev:
+  garage-dev:

@@ -1,7 +1,12 @@
 # Deployment — Coolify on a self-hosted VPS
 
 The app is a single Docker image (Next.js standalone server with Payload CMS embedded)
-plus PostgreSQL. Nothing depends on Vercel or a managed service.
+plus PostgreSQL, with imagery and CMS uploads in a self-hosted **Garage** S3 bucket
+(separate Coolify resource, see [STORAGE.md](STORAGE.md)). Nothing depends on Vercel or
+a managed service.
+
+> Imagery is not in the repository. A fresh deployment shows no renders or photos until
+> Garage is set up, the files are uploaded and `ASSET_URL` is configured (STORAGE.md §1–4).
 
 ## 1. Create the resource in Coolify
 
@@ -33,6 +38,10 @@ internal connection string and add a persistent storage mount at `/app/media`.
 | `INQUIRY_NOTIFY_TO` | optional | Comma-separated recipients (overridden by *Site settings → Notify emails*) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | optional | Enables Cloudflare Turnstile on the form. **Update the privacy notice** if you enable it |
 | `SITE_INDEXABLE` | optional | `false` on a staging domain to disallow indexing |
+| `ASSET_URL` | yes* | Public base of the asset bucket, e.g. `https://assets.noclue.industries`. Read at runtime |
+| `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_REGION` | yes* | Garage S3 API + key (`nci-app`). Enables CMS uploads to S3. Region defaults to `garage` |
+
+\* Required for imagery and S3 uploads. Without the `S3_*` variables, uploads fall back to the `media` volume.
 
 Mark secrets as *secret* in Coolify. Never commit `.env`.
 
@@ -67,10 +76,11 @@ temporarily switch the command. Afterwards open `https://noclue.industries/admin
 | Volume | Mounted at | Contains |
 |---|---|---|
 | `pgdata` | `/var/lib/postgresql/data` (db) | all CMS content, inquiries, users |
-| `media` | `/app/media` (app) | uploaded images and generated sizes |
+| `media` | `/app/media` (app) | uploads **only when S3 is not configured** (fallback) |
+| `garage-meta`, `garage-data` | Garage resource | all imagery and CMS uploads, the private source archive |
 
-Static renders, the exploded-view sequence, fonts and logos are part of the image
-(`public/`), not of the media volume.
+Renders, photography and the exploded-view sequence live in the Garage bucket (`pnpm
+assets:upload`). Fonts, logos and the OG image are part of the image (`public/`).
 
 ## 6. Backups and restore
 

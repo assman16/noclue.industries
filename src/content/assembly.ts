@@ -31,4 +31,6 @@ export const ASSEMBLY = {
   callouts: all.filter((l) => SHOWN.includes(l.id)).sort((a, b) => a.x - b.x),
 }
 
-export const frameUrl = (width: number, frame: number) => `${ASSEMBLY.base}/${width}/da02-${String(frame).padStart(3, '0')}.webp`
+/** Frame URL. `origin` is the public asset origin (ASSET_URL), passed down from the server. */
+export const frameUrl = (origin: string, width: number, frame: number) =>
+  `${origin}${ASSEMBLY.base}/${width}/da02-${String(frame).padStart(3, '0')}.webp`

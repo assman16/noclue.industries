@@ -10,6 +10,7 @@
  * Uses `payload run`, so it works locally and inside the production container.
  */
 import fs from 'fs'
+import os from 'os'
 import path from 'path'
 
 import { convertMarkdownToLexical, editorConfigFactory } from '@payloadcms/richtext-lexical'
@@ -21,6 +22,25 @@ import { homeDefaults, servicesDefaults, settingsDefaults } from '../src/content
 import { legalMarkdown, privacyMarkdown } from '../src/content/legal'
 
 const force = process.argv.includes('--force') || process.env.SEED_FORCE === '1'
+const ASSET_URL = (process.env.ASSET_URL || '').replace(/\/+$/, '')
+
+/**
+ * Seed images are the web renders in public/renders/<v>. They are not in git (they live
+ * in the S3 asset bucket), so inside a production container the file is fetched from
+ * ASSET_URL when it isn't on disk. Returns a local path, or null.
+ */
+async function sourceFile(file: string): Promise<string | null> {
+  const abs = path.resolve(ROOT, file)
+  if (fs.existsSync(abs)) return abs
+  if (!ASSET_URL) return null
+  const rel = file.replace(/^public\//, '')
+  const res = await fetch(`${ASSET_URL}/${rel}`)
+  if (!res.ok) return null
+  const tmp = path.join(os.tmpdir(), 'nci-seed', path.basename(file))
+  fs.mkdirSync(path.dirname(tmp), { recursive: true })
+  fs.writeFileSync(tmp, Buffer.from(await res.arrayBuffer()))
+  return tmp
+}
 const ctx = { skipRevalidate: true }
 const ROOT = process.cwd()
 
@@ -46,9 +66,10 @@ async function upsertBySlug(payload: Payload, collection: 'services' | 'pages' |
 async function media(payload: Payload, file: string, alt: string, caption: string, kind: 'render' | 'photo' | 'cad' | 'drawing' | 'diagram' = 'render') {
   const filename = path.basename(file)
   const existing = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, overrideAccess: true })
-  const abs = path.resolve(ROOT, file)
+  if (existing.docs[0] && !force) return existing.docs[0]
+  const abs = await sourceFile(file)
   if (existing.docs[0]) {
-    if (!force || !fs.existsSync(abs)) return existing.docs[0]
+    if (!abs) return existing.docs[0]
     payload.logger.info(`  ~ media ${filename} replaced`)
     return payload.update({
       collection: 'media',
@@ -60,8 +81,8 @@ async function media(payload: Payload, file: string, alt: string, caption: strin
       context: ctx,
     })
   }
-  if (!fs.existsSync(abs)) {
-    payload.logger.warn(`  ! media source missing: ${file}`)
+  if (!abs) {
+    payload.logger.warn(`  ! media source missing: ${file} (not on disk${ASSET_URL ? ' and not at ASSET_URL' : '; set ASSET_URL to fetch it'})`)
     return null
   }
   payload.logger.info(`  + media ${filename}`)

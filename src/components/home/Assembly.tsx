@@ -9,7 +9,7 @@ import { Prov } from '../Prov'
 import { RenderImage } from '../RenderImage'
 import s from './Assembly.module.css'
 
-type Props = { title: string; body: string; disclaimer: string }
+type Props = { title: string; body: string; disclaimer: string; origin?: string }
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v))
 
@@ -21,7 +21,7 @@ const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v))
  *
  * Reduced motion: static closed / exploded renders and a part list.
  */
-export function Assembly({ title, body, disclaimer }: Props) {
+export function Assembly({ title, body, disclaimer, origin = '' }: Props) {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const currentRef = useRef(-1)
@@ -113,7 +113,7 @@ export function Assembly({ title, body, disclaimer }: Props) {
       new Promise<void>((resolve) => {
         const img = new Image()
         img.decoding = 'async'
-        img.src = frameUrl(width, i + 1)
+        img.src = frameUrl(origin, width, i + 1)
         img.onload = () => {
           if (disposed) return resolve()
           frames[i] = img
@@ -161,7 +161,7 @@ export function Assembly({ title, body, disclaimer }: Props) {
       window.removeEventListener('scroll', onScroll)
       cancelAnimationFrame(raf)
     }
-  }, [mode])
+  }, [mode, origin])
 
   const u = clamp((progress - ASSEMBLY.explodeStart) / (ASSEMBLY.explodeEnd - ASSEMBLY.explodeStart))
   const showLabels = u > 0.94
@@ -174,15 +174,15 @@ export function Assembly({ title, body, disclaimer }: Props) {
         <div className="wrap">
           <Intro title={title} body={body} disclaimer={disclaimer} />
           <figure className={s.staticWide}>
-            <RenderImage asset={RENDERS.da02Exploded} sizes="100vw" />
+            <RenderImage origin={origin} asset={RENDERS.da02Exploded} sizes="100vw" />
           </figure>
           <div className={s.pair}>
             <figure>
-              <RenderImage asset={RENDERS.da02Assembled} sizes="(max-width: 900px) 100vw, 50vw" />
+              <RenderImage origin={origin} asset={RENDERS.da02Assembled} sizes="(max-width: 900px) 100vw, 50vw" />
               <figcaption className="label">Assembled</figcaption>
             </figure>
             <figure>
-              <RenderImage asset={RENDERS.da02DetailStator} sizes="(max-width: 900px) 100vw, 50vw" />
+              <RenderImage origin={origin} asset={RENDERS.da02DetailStator} sizes="(max-width: 900px) 100vw, 50vw" />
               <figcaption className="label">Stator and rotor</figcaption>
             </figure>
           </div>
@@ -195,7 +195,7 @@ export function Assembly({ title, body, disclaimer }: Props) {
   return (
     <section id="assembly" ref={sectionRef} className={s.scroller} aria-labelledby="assembly-title">
       <div className={s.sticky}>
-        <RenderImage asset={RENDERS.da02Assembled} sizes="100vw" className={s.poster} alt="" style={{ opacity: ready ? 0 : 1 }} />
+        <RenderImage origin={origin} asset={RENDERS.da02Assembled} sizes="100vw" className={s.poster} alt="" style={{ opacity: ready ? 0 : 1 }} />
         <canvas
           ref={canvasRef}
           className={s.canvas}
